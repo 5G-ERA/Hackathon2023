@@ -32,7 +32,7 @@ tasks = dict()
 
 # queue with received data
 # needed when the network application should process the data in separated thread
-#data_queue = Queue(30)
+data_queue = Queue(30)
 
 # the threaded worker to be used
 worker_thread = None
