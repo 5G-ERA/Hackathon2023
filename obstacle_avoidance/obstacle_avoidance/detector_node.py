@@ -139,8 +139,8 @@ class Driver(Node):
 def main():
     rclpy.init()
 
-    nearest_obstacle = NearestObstacle(90)
-    driver = Driver()
+    nearest_obstacle = NearestObstacle(90) # 90 degrees
+    driver = Driver(0.2) # 20cm
     executor = rclpy.executors.MultiThreadedExecutor()
     executor.add_node(nearest_obstacle)
     executor.add_node(driver)
