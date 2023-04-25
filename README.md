@@ -19,6 +19,7 @@ In this session, you will create a new network application to receive the LaserS
 1) Install the requirements for the era_5g_network_application_template package.
     1) `sudo apt install python3-pip`
     1) `pip install -r requirement.txt`
+    1) `pip install era-5g-client`
 1) Edit the interface.py file
     1) In the register method, read the scan_width parameter from the args dictionary (see client.py, line 21).
     1) Create a subclass of the TaskHandlerInternalQ (https://github.com/5G-ERA/era-5g-interface/blob/main/era_5g_interface/task_handler_internal_q.py) so it can hold the scan_width parameter value and use it in the register method.
