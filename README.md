@@ -24,9 +24,10 @@ In this session, you will create a new network application to receive the LaserS
     1) In the register method, read the scan_width parameter from the args dictionary (see client.py, line 21).
     1) Create a subclass of the TaskHandlerInternalQ (https://github.com/5G-ERA/era-5g-interface/blob/main/era_5g_interface/task_handler_internal_q.py) so it can hold the scan_width parameter value and use it in the register method.
     1) Edit the json_callback_http method
-        1) Copy the “core algorithm” from the obstacle_avoidance ros2 package
-        1) Get the required data from the “data” variable - the exact format can be seen in the laser_data.txt file
-        1) Using the flask_socketio.send send the results 
+        2) Copy the “core algorithm” from the obstacle_avoidance ros2 package
+        3) Get the required data from the “data” variable - the exact format can be seen in the laser_data.txt file
+        4) Get the scan_width parameter from the "task" variable - the "task" variable holds the TaskHandler you have created in previous steps and it contains information for the currently connected client / robot.
+        5) Using the flask_socketio.send send the results 
 1) Run the network application and use the client.py script to test the network application
     1) `python3 interface.py`
     1) `python3 client.py`
@@ -48,8 +49,8 @@ In this session, you should edit the original obstacle_avoidance ROS package to 
 
 1) Edit the detector_node.py from the obstacle_avoidance package.
     1) Remove the “core algorithm”
-    1) In the __init__ method of NearestObject class, create an instance of the Python client, using the examples in client.py and client_middleware.py
-    1) In the listener_callback, send the laser data to the network application using the send_json_http method of the Python client class.
+    1) In the __init__ method of NearestObject class, create an instance of the Python client, using the examples in client.py (without middleware, i.e., the network application must be started manually) and client_middleware.py (using the middleware, i.e., the network application must be onboarded).
+    1) In the listener_callback, send the laser data to the network application using the send_json_http method of the Python client class. If you look at the data, you will notice that some ranges are "inf", which is not a json serializable value. Therefore, you need to go through the ranges list a replace any "inf" value with some large number (you can use the "range_max" property of the laser data, which specify the longest distance the laser can measure). You can see the example in client.py file.
     1) Create a callback method for results, in which you will publish the result using the distance_pub object. 
 1) Run the nodes
     1) `source /opt/ros/foxy/setup.bash`
