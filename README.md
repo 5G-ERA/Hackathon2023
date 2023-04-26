@@ -43,6 +43,23 @@ In this session, you will create a new network application to receive the LaserS
         1) The credentials will be shared during the hackathon event
     1) `sudo docker push 5ghackathon/laser_scan_unique:1.0.0`
 
+
+### Bonus task
+
+If you are done with all tasks above, you may try the following bonus tasks.   
+
+
+#### Process the LaserData in a separate Thread, instead of in the endpoint.  
+
+This is the recommended approach because in this case, the data processing does not block the main thread, which is responsible for communication with the clients. You can use the available worker.py script to implement the "worker" and pass it data using the DataQueue in the TaskHolder. You can see the inspiration here: https://github.com/5G-ERA/Reference-NetApp/blob/06b97586615541a9e6d73e49f72975949e813f5d/src/python/era_5g_object_detection_standalone/era_5g_object_detection_standalone/interface.py#L109
+
+1) Move the "core algorithm" to the "process_data" method in worker.py
+2) Pass the scan_width parameter to the worker using metadata (you will need to modify the definition of the process_data method). 
+   1) Remember! In this implementation, the worker process data from every connected robot. Therefore, you cannot save the parameter to the instance of the worker, because it could be different for each of the connected robots. 
+3) Import the worker in the interface method, make an instance of it and run it.
+4) Pass the data to the worker using the data_queue
+
+
 ## Consuming the Newly created Network Application by robots 
 
 In this session, you should edit the original obstacle_avoidance ROS package to offload the computation to the network application.
@@ -55,3 +72,14 @@ In this session, you should edit the original obstacle_avoidance ROS package to 
 1) Run the nodes
     1) `source /opt/ros/foxy/setup.bash`
     1) `python3 detector_node `
+
+
+### Bonus tasks
+
+#### Control the robot from the network application
+
+Modify the network application and the ROS nodes so the network application sends directly the speed information for the robot instead of sending the information of the nearest object. The ROS node will then publish the Twist message based on the speed received from the network application.
+
+#### Harder, Better, Faster, Stronger
+
+Modify the Drive node to move the robot in "better" way. It can drive faster, smoothly slow down (instead of instant stop), and maybe use a better strategy of searching the free path. There are no limits to imagination!
