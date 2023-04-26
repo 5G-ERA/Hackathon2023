@@ -13,7 +13,7 @@ In this session, you will create a new network application to receive the LaserS
 1) Install the requirements for the era_5g_network_application_template package.
     1) `sudo apt install python3-pip`
     1) `pip install -r requirement.txt`
-    1) `pip install era-5g-client`
+    1) `pip install era_5g_client-0.2.0-py3-none-any.whl`
 3) Rename the era_5g_network_application_template package to some unique name
     1) Name of the package folder
     1) Name of the module folder (era_5g_network_application_template/era_5g_network_application_template)
