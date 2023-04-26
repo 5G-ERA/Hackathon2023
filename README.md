@@ -24,10 +24,10 @@ In this session, you will create a new network application to receive the LaserS
     1) In the register method, read the scan_width parameter from the args dictionary (see client.py, line 21).
     1) Create a subclass of the TaskHandlerInternalQ (https://github.com/5G-ERA/era-5g-interface/blob/main/era_5g_interface/task_handler_internal_q.py) so it can hold the scan_width parameter value and use it in the register method.
     1) Edit the json_callback_http method
-        2) Copy the “core algorithm” from the obstacle_avoidance ros2 package
-        3) Get the required data from the “data” variable - the exact format can be seen in the laser_data.txt file
-        4) Get the scan_width parameter from the "task" variable - the "task" variable holds the TaskHandler you have created in previous steps and it contains information for the currently connected client / robot.
-        5) Using the flask_socketio.send send the results 
+        1) Copy the “core algorithm” from the obstacle_avoidance ros2 package
+        2) Get the required data from the “data” variable - the exact format can be seen in the laser_data.txt file
+        3) Get the scan_width parameter from the "task" variable - the "task" variable holds the TaskHandler you have created in previous steps and it contains information for the currently connected client / robot.
+        4) Using the flask_socketio.send send the results 
 1) Run the network application and use the client.py script to test the network application
     1) `python3 interface.py`
     1) `python3 client.py`
