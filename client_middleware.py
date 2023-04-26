@@ -31,7 +31,7 @@ try:
     # authenticates with the middleware
     client.connect_to_middleware(MiddlewareInfo(MIDDLEWARE_ADDRESS, MIDDLEWARE_USER, MIDDLEWARE_PASSWORD))
     # run task, wait until is ready and register with it
-    client.run_task(MIDDLEWARE_TASK_ID, MIDDLEWARE_ROBOT_ID, True, RunTaskMode.WAIT_AND_REGISTER)
+    client.run_task(MIDDLEWARE_TASK_ID, MIDDLEWARE_ROBOT_ID, True, RunTaskMode.WAIT_AND_REGISTER, args={"scan_width": 90})
 
     # goes through the laser data and send them to the network application
     for measurement in laser_data:
@@ -41,8 +41,8 @@ except FailedToConnect as ex:
         print(f"Failed to connect to server ({ex})")
 except KeyboardInterrupt:
     print("Terminating...")
-except Exception as ex:
-    print(f"Failed to create client instance ({ex})")
+#except Exception as ex:
+#    print(f"Failed to create client instance ({ex})")
 finally:
     if client is not None:
         client.disconnect()
