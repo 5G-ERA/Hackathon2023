@@ -1,7 +1,8 @@
 import json
 # import 5GEra client
-from era_5g_client.client import NetAppClient, MiddlewareInfo
+from era_5g_client.client import NetAppClient, MiddlewareInfo, FailedToConnect, RunTaskMode
 import math
+import os
 
 # ip address or hostname of the middleware server
 MIDDLEWARE_ADDRESS = os.getenv("MIDDLEWARE_ADDRESS", "127.0.0.1")
@@ -26,7 +27,7 @@ def results(data):
     print(data)
 try:
     # creates an instance of NetApp client with results callback
-    client = NetAppClient(get_results)
+    client = NetAppClient(results)
     # authenticates with the middleware
     client.connect_to_middleware(MiddlewareInfo(MIDDLEWARE_ADDRESS, MIDDLEWARE_USER, MIDDLEWARE_PASSWORD))
     # run task, wait until is ready and register with it
@@ -41,7 +42,6 @@ except FailedToConnect as ex:
 except KeyboardInterrupt:
     print("Terminating...")
 except Exception as ex:
-    traceback.print_exc()
     print(f"Failed to create client instance ({ex})")
 finally:
     if client is not None:
