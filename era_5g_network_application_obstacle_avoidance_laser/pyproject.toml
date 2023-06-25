@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "era_5g_network_application_template"
+name = "era_5g_network_application_obstacle_avoidance_laser"
 version = "0.0.1"
 authors = [
   { name="Amy Pond", email="amy.pond@tardis.earth" },

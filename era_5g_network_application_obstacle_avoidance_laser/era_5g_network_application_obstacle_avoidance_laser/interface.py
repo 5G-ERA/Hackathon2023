@@ -10,8 +10,15 @@ import flask_socketio
 from flask import Flask, Response, request, session
 from flask_session import Session
 import logging
+from flask import Flask, render_template, request
+import os
+
 
 from era_5g_interface.task_handler_internal_q import TaskHandlerInternalQ
+from myTaskHandle import customTaskHandler
+
+from worker import Worker
+
 # the worker is needed when the network application should process the data in separated thread
 #from era_5g_network_application_template.worker import Worker
 
@@ -19,7 +26,8 @@ from era_5g_interface.task_handler_internal_q import TaskHandlerInternalQ
 NETAPP_PORT = os.getenv("NETAPP_PORT", 5896)
 
 # flask initialization
-app = Flask(__name__)
+app = Flask(__name__,template_folder=os.path.abspath(os.path.dirname(__file__)))
+
 app.secret_key = secrets.token_hex()
 app.config['SESSION_TYPE'] = 'filesystem'
 
@@ -40,6 +48,29 @@ worker_thread = None
 class ArgFormatError(Exception):
     pass
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/button1', methods=['POST'])
+def button1():
+    # Lógica para el botón 1
+    return 'Se presionó el botón 1'
+
+@app.route('/button2', methods=['POST'])
+def button2():
+    # Lógica para el botón 2
+    return 'Se presionó el botón 2'
+
+@app.route('/button3', methods=['POST'])
+def button3():
+    # Lógica para el botón 3
+    return 'Se presionó el botón 3'
+
+@app.route('/button4', methods=['POST'])
+def button4():
+    # Lógica para el botón 4
+    return 'Se presionó el botón 4'
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -51,12 +82,14 @@ def register():
     # get the network application configuration
     # args is dictionary with optional parameters
     args = request.get_json(silent=True)
+    scan_width = args.get("scan_width")
+
     # register the robot's session
     session['registered'] = True
 
     # create an instance of task handler, which will be responsible for holding
     # the information of the robot and the connection to it
-    task = TaskHandlerInternalQ(session.sid, data_queue, daemon=True)
+    task = customTaskHandler(session.sid, scan_width, data_queue, daemon=True)
     # we need to store the task into the dictionary
     tasks[session.sid] = task
     print(f"Client registered: {session.sid}")
@@ -121,20 +154,28 @@ def json_callback_http():
     
     sid = session.sid
     task = tasks[sid]
-    data = request.get_json(silent=True)
+    data = request.get_json(silent=True) # This is dictionary
     if not data:
         return Response("No data provided", status=400)
-    
+
+    print(data)
     # here the data could be processed or passed to the worker using the internal queue
-
-    with app.app_context():
-        # send results back to the client (robot)
-        # flask_socketio.send(data: dict(), namespace='/results', to=task.websocket_id)
-        # the format of the result is specific for the network application and it is not 
-        # specified by the protocol
-        flask_socketio.send({"result": data}, namespace='/results', to=task.websocket_id)
-    return Response(status=200)
-
+    '''
+    # the index of the "middle" value, i.e., the front of the robot (in ideal case).
+    middle = int(len(data.get("ranges")) / 2)
+        
+    # the amount of values in ranges array to both sides from the middle
+    width = int((task.scan_width / 2) / abs(data.get("angle_increment")))
+        
+    # the section of ranges in selected width
+    ranges = data.get("ranges")[middle - width : middle + width]
+    
+    # the "nearest" obstacle in front of the robot
+    '''
+    timestamp = []
+    task.store_laser({"sid": session.sid, "websocket_id": task.websocket_id, "timestamp": timestamp, "decoded": False, "scan_width": task.scan_width}, data)
+    return Response(status=204)
+    
 @socketio.on('image', namespace='/data')
 def image_callback_websocket(data: dict):
     """
@@ -279,8 +320,8 @@ def main(args=None):
     
     logging.getLogger().setLevel(logging.DEBUG)
     # the worker is needed when the network application should process the data in separated thread
-    #worker_thread = Worker(data_queue, app)
-    #worker_thread.start()
+    worker_thread = Worker(data_queue, app)
+    worker_thread.start()
 
 
 
